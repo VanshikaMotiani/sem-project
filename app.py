@@ -31,7 +31,7 @@ from catalog import (
 )
 from db import get_db, get_site_stats, increment_visitor_count, init_db, parse_details
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="template")
 app.secret_key = os.environ.get("NMC_SECRET_KEY", "nagar-nigam-civic-portal-semester-project-2026")
 
 # Ensure SQLite DB and seed data are ready on startup
