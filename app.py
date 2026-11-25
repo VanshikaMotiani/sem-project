@@ -243,7 +243,7 @@ def track_complaint():
             (query, query),
         ).fetchall()
         conn.close()
-                if len(results) == 1 and query.upper().startswith("NMC-"):
+        if len(results) == 1 and query.upper().startswith("NMC-"):
             return redirect(url_for("complaint_detail", tracking_id=results[0]["tracking_id"]))
     else:
         conn = get_db()
