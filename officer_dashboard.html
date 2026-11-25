@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Officer Dashboard — Nagar Nigam{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+      <h2 class="nn-section-heading mb-0">Municipal Officer Dashboard</h2>
+      <small class="text-muted">Signed in as <strong>{{ officer_user.full_name }}</strong> ({{ officer_user.designation }} — {{ officer_user.zone_name }})</small>
+    </div>
+    <a href="{{ url_for('officer_logout') }}" class="btn btn-outline-danger btn-sm fw-semibold">
+      <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+    </a>
+  </div>
+
+  <!-- KPI Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="nn-card p-3 border-start border-primary border-4">
+        <div class="small text-muted">Total Grievances</div>
+        <div class="fs-3 fw-bold text-primary">{{ counts.total }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="nn-card p-3 border-start border-info border-4">
+        <div class="small text-muted">Newly Registered</div>
+        <div class="fs-3 fw-bold text-info">{{ counts.registered }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="nn-card p-3 border-start border-warning border-4">
+        <div class="small text-muted">In Progress / Assigned</div>
+        <div class="fs-3 fw-bold text-warning">{{ counts.in_progress }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="nn-card p-3 border-start border-success border-4">
+        <div class="small text-muted">Resolved / Closed</div>
+        <div class="fs-3 fw-bold text-success">{{ counts.resolved }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <form method="GET" class="nn-panel mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold">Status</label>
+        <select name="status" class="form-select form-select-sm">
+          <option value="All">All Statuses</option>
+          {% for st in status_flow %}
+          <option value="{{ st }}" {% if status_filter == st %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold">Category</label>
+        <select name="category" class="form-select form-select-sm">
+          <option value="All">All Departments</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if category_filter == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold">Zone</label>
+        <select name="zone" class="form-select form-select-sm">
+          <option value="All">All Zones</option>
+          {% for z in zones %}
+          <option value="{{ z.id }}" {% if zone_filter == z.id %}selected{% endif %}>{{ z.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm flex-fill fw-semibold">Filter</button>
+        <a href="{{ url_for('officer_dashboard') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Complaints Table with Inline Update -->
+  <div class="nn-panel mb-4">
+    <h5 class="fw-bold text-primary mb-3">Manage Citizen Grievances</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Tracking ID</th>
+            <th>Chosen Problem &amp; Citizen</th>
+            <th>Zone / Ward</th>
+            <th>Current Status</th>
+            <th style="min-width:300px;">Update Resolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in complaints %}
+          <tr>
+            <td>
+              <a href="{{ url_for('complaint_detail', tracking_id=c.tracking_id) }}" class="fw-bold text-decoration-none">{{ c.tracking_id }}</a>
+              <div class="text-muted" style="font-size:0.72rem;">{{ c.created_at }}</div>
+              <span class="badge bg-secondary mt-1">{{ c.severity }}</span>
+            </td>
+            <td>
+              <div class="fw-semibold small text-primary">{{ c.category_name }}</div>
+              <div class="small fw-semibold">{{ c.sub_problem_title }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">{{ c.citizen_name }} ({{ c.citizen_phone }}) &bull; {{ c.location_type }}</div>
+            </td>
+            <td class="small">{{ c.zone_name }}<br><span class="text-muted">{{ c.ward }}</span></td>
+            <td>
+              <span class="badge {% if c.status in ('Resolved','Closed') %}bg-success{% elif c.status == 'In Progress' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}">
+                {{ c.status }}
+              </span>
+            </td>
+            <td>
+              <form method="POST" action="{{ url_for('officer_update_complaint', tracking_id=c.tracking_id) }}" class="d-flex flex-column gap-1">
+                <div class="d-flex gap-1">
+                  <select name="status" class="form-select form-select-sm">
+                    {% for st in status_flow %}
+                    <option value="{{ st }}" {% if c.status == st %}selected{% endif %}>{{ st }}</option>
+                    {% endfor %}
+                  </select>
+                  <input type="text" name="assigned_officer" class="form-control form-control-sm" value="{{ c.assigned_officer }}" placeholder="Assigned Officer">
+                </div>
+                <div class="d-flex gap-1">
+                  <input type="text" name="remarks" class="form-control form-control-sm" placeholder="Action / Resolution remark...">
+                  <button type="submit" class="btn btn-sm btn-primary fw-semibold flex-shrink-0">Save</button>
+                </div>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No complaints match the current filter.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Publish New Notice / News -->
+  <div class="nn-panel">
+    <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-bullhorn me-2"></i>Publish Public News or Important Notice</h5>
+    <form method="POST" action="{{ url_for('officer_add_notice') }}" class="row g-3">
+      <div class="col-md-5">
+        <label class="form-label small fw-semibold">Notice Title</label>
+        <input type="text" name="title" class="form-control" required placeholder="e.g. Ward 14 Fogging Drive Tomorrow">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold">Category</label>
+        <select name="category" class="form-select">
+          <option value="Public News">Public News</option>
+          <option value="Important Notice">Important Notice</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small fw-semibold">Issuing Department</label>
+        <input type="text" name="department" class="form-control" value="Nagar Nigam Administration">
+      </div>
+      <div class="col-12">
+        <label class="form-label small fw-semibold">Details</label>
+        <textarea name="details" class="form-control" rows="2" required placeholder="Brief circular details..."></textarea>
+      </div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success fw-bold">Publish to Homepage</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

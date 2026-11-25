@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% block title %}Nagar Nigam Civic Portal — Citizen Grievance & Municipal Services{% endblock %}
+
+{% block content %}
+<!-- Original Split Civic Command Hero -->
+<section class="nn-hero-banner">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="badge bg-warning text-dark fw-bold mb-2 px-3 py-2">
+          <i class="fa-solid fa-hand-pointer me-1"></i> E-SAMADHAN &bull; CHOOSE YOUR PROBLEM IN 3 CLICKS
+        </span>
+        <h1 class="display-6 fw-bold mb-2">Nagar Nigam Citizen Services &amp; Grievance Redressal</h1>
+        <p class="lead mb-3" style="opacity:0.92; font-size:1.05rem;">
+          Select your civic problem directly from 50+ categorized municipal options across Sanitation, Water, Street Lights, Roads, and Parks — no manual typing required.
+        </p>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <a href="{{ url_for('register_complaint') }}" class="btn btn-warning fw-bold px-4 py-2 text-dark">
+            <i class="fa-solid fa-list-check me-2"></i>Choose &amp; Register Problem
+          </a>
+          <a href="{{ url_for('pay_tax') }}" class="btn btn-outline-light fw-semibold px-4 py-2">
+            <i class="fa-solid fa-indian-rupee-sign me-2"></i>Pay Property Tax
+          </a>
+        </div>
+        <div class="d-flex flex-wrap gap-4 small" style="opacity:0.9;">
+          <span><i class="fa-solid fa-map-pin text-warning me-1"></i>7 Zones &bull; 150 Wards</span>
+          <span><i class="fa-solid fa-clock text-info me-1"></i>SLA 6h–72h Tracking</span>
+          <span><i class="fa-solid fa-phone text-warning me-1"></i>Helpline: 1800-180-4400</span>
+        </div>
+      </div>
+
+      <!-- Right Instant Action Card -->
+      <div class="col-lg-5">
+        <div class="nn-hero-quickbox">
+          <h5 class="fw-bold text-primary mb-2"><i class="fa-solid fa-magnifying-glass-location me-2"></i>Quick Track Complaint</h5>
+          <p class="small text-muted mb-2">Enter your Tracking ID or 10-digit Mobile Number to view live status:</p>
+          <form method="GET" action="{{ url_for('track_complaint') }}" class="d-flex gap-2 mb-3">
+            <input type="text" name="q" class="form-control" placeholder="e.g. NMC-2026-000101" required>
+            <button type="submit" class="btn btn-primary fw-bold px-3">Track</button>
+          </form>
+          <div class="row g-2 text-center border-top pt-3">
+            <div class="col-4">
+              <div class="fs-5 fw-bold text-primary">{{ total_complaints }}</div>
+              <div class="text-muted" style="font-size:0.74rem;">Total Cases</div>
+            </div>
+            <div class="col-4">
+              <div class="fs-5 fw-bold text-success">{{ resolved_complaints }}</div>
+              <div class="text-muted" style="font-size:0.74rem;">Resolved</div>
+            </div>
+            <div class="col-4">
+              <div class="fs-5 fw-bold text-info">150</div>
+              <div class="text-muted" style="font-size:0.74rem;">Active Wards</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <!-- Modern 4x3 Quick Service Cards -->
+  <div class="nn-service-grid">
+    {% for tile in quick_tiles %}
+    <a href="{{ tile.url }}" class="nn-service-card">
+      <div class="nn-service-icon" style="background: {{ tile.accent }};">
+        <i class="{{ tile.icon }}"></i>
+      </div>
+      <div>
+        <div class="fw-bold" style="font-size:0.88rem; line-height:1.2;">{{ tile.title }}</div>
+        <div class="text-muted" style="font-size:0.74rem;">{{ tile.subtitle }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Main Two-Column Body -->
+  <div class="row g-4">
+    <!-- Left Wider Column -->
+    <div class="col-lg-8">
+      <!-- Direct Problem Category Picker (Core Feature Front & Center) -->
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="nn-section-heading mb-0">Choose Your Problem Category to Register</h2>
+        <a href="{{ url_for('register_complaint') }}" class="btn btn-sm btn-primary fw-semibold">View All 52 Issues &rarr;</a>
+      </div>
+      <p class="small text-muted mb-3">Click any municipal wing below to pick your exact problem from ready-made options without typing:</p>
+
+      <div class="row g-2 mb-4">
+        {% for cat in categories %}
+        <div class="col-sm-6 col-md-3">
+          <a href="{{ url_for('register_complaint', category=cat.id) }}" class="text-decoration-none">
+            <div class="problem-cat-card">
+              <div class="d-flex align-items-center gap-2">
+                <span class="problem-cat-icon"><i class="{{ cat.icon }}"></i></span>
+                <div>
+                  <div class="fw-bold text-dark" style="font-size:0.82rem; line-height:1.2;">{{ cat.name }}</div>
+                  <div class="text-muted" style="font-size:0.7rem;">{{ cat.name_hi }}</div>
+                </div>
+              </div>
+              <div class="mt-auto pt-2 d-flex justify-content-between align-items-center border-top">
+                <span class="badge bg-light text-primary border" style="font-size:0.7rem;">{{ cat.sub_problems|length }} Options</span>
+                <span class="text-muted" style="font-size:0.7rem;">SLA {{ cat.sla_hours }}h</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Civic Services & Administration Directory -->
+      <h2 class="nn-section-heading">Municipal Departments &amp; Online Facilities</h2>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="nn-card">
+            <div class="nn-card-header">
+              <span>Citizen E-Services</span>
+              <i class="fa-solid fa-laptop-file"></i>
+            </div>
+            <div class="nn-card-body">
+              <ul class="nn-check-list">
+                <li><a href="{{ url_for('register_complaint') }}"><i class="fa-solid fa-check"></i><strong>Register Civic Grievance</strong></a></li>
+                <li><a href="{{ url_for('track_complaint') }}"><i class="fa-solid fa-check"></i><span>Track Complaint Status</span></a></li>
+                <li><a href="{{ url_for('pay_tax') }}"><i class="fa-solid fa-check"></i><span>Pay UD / Property Tax</span></a></li>
+                <li><a href="{{ url_for('service_registration', type='Birth Certificate') }}"><i class="fa-solid fa-check"></i><span>Birth &amp; Death Certificates</span></a></li>
+                <li><a href="{{ url_for('service_registration', type='Pet Registration') }}"><i class="fa-solid fa-check"></i><span>Dog / Cat Registration</span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="nn-card">
+            <div class="nn-card-header">
+              <span>Licenses &amp; Permits</span>
+              <i class="fa-solid fa-id-card"></i>
+            </div>
+            <div class="nn-card-body">
+              <ul class="nn-check-list">
+                <li><a href="{{ url_for('service_registration', type='Trade License') }}"><i class="fa-solid fa-check"></i><span>Commercial Trade License</span></a></li>
+                <li><a href="{{ url_for('service_registration', type='Meat License Registration') }}"><i class="fa-solid fa-check"></i><span>Meat Shop Registration</span></a></li>
+                <li><a href="{{ url_for('service_registration', type='Dairy Booth Permit') }}"><i class="fa-solid fa-check"></i><span>Dairy Booth Rent &amp; Permit</span></a></li>
+                <li><a href="{{ url_for('tenders') }}"><i class="fa-solid fa-check"></i><span>e-Auction &amp; Active Tenders</span></a></li>
+                <li><a href="{{ url_for('wards') }}"><i class="fa-solid fa-check"></i><span>Zones &amp; 150 Ward Map</span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="nn-card border-primary">
+            <div class="nn-card-header">
+              <span>e-Samadhan Helpdesk</span>
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div class="nn-card-body text-center d-flex flex-column justify-content-between">
+              <div>
+                <div class="fw-bold text-danger mb-1">Zero-Typing Grievance Portal</div>
+                <p class="small text-muted mb-2">Pick category, exact issue &amp; ward for instant department routing.</p>
+                <div class="d-grid gap-2 mb-2">
+                  <a href="{{ url_for('register_complaint') }}" class="btn btn-sm btn-primary fw-bold">Register Problem</a>
+                  <a href="{{ url_for('officer_login') }}" class="btn btn-sm btn-outline-dark fw-semibold">Officer Portal</a>
+                </div>
+              </div>
+              <div class="pt-2 border-top small">
+                <span class="fw-bold text-primary">Call Center: 1800-180-4400</span><br>
+                <span class="text-muted">Safaimitra Helpline: <strong>14420</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Civic Drives Banner Cards -->
+      <h2 class="nn-section-heading">Swachhata &amp; Environmental Initiatives</h2>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="nn-card p-3 text-center">
+            <i class="fa-solid fa-helmet-safety fa-2x text-primary mb-2"></i>
+            <h6 class="fw-bold mb-1">Safaimitra Suraksha</h6>
+            <div class="fs-5 fw-bold text-danger">14420</div>
+            <p class="small text-muted mb-0">24&times;7 Mechanized Sewer &amp; Safety Helpline</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="nn-card p-3 text-center">
+            <i class="fa-solid fa-recycle fa-2x text-success mb-2"></i>
+            <h6 class="fw-bold mb-1">Waste Segregation</h6>
+            <p class="small text-muted mb-2">Report missed tipper van or overflowing bins in 2 clicks.</p>
+            <a href="{{ url_for('register_complaint', category='sanitation') }}" class="btn btn-sm btn-outline-success">Report Sanitation</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="nn-card p-3 text-center">
+            <i class="fa-solid fa-wind fa-2x text-info mb-2"></i>
+            <h6 class="fw-bold mb-1">NCAP Air Monitoring</h6>
+            <p class="small text-muted mb-2">View real-time CAAQMS AQI levels across all municipal zones.</p>
+            <a href="{{ url_for('aqi') }}" class="btn btn-sm btn-outline-primary">Check Live AQI</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Narrower Sidebar -->
+    <div class="col-lg-4">
+      <!-- Municipal Administration Summary -->
+      <div class="nn-sidebar-box">
+        <div class="nn-card-header">
+          <span>Municipal Administration</span>
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <div class="p-3 small">
+          <div class="d-flex justify-content-between py-1 border-bottom">
+            <span class="text-muted">Administrative Zones</span><strong>7 Zones</strong>
+          </div>
+          <div class="d-flex justify-content-between py-1 border-bottom">
+            <span class="text-muted">Municipal Wards</span><strong>150 Wards</strong>
+          </div>
+          <div class="d-flex justify-content-between py-1 border-bottom">
+            <span class="text-muted">Nodal Officer (IT)</span><strong>Sh. Arvind Kulkarni</strong>
+          </div>
+          <div class="d-flex justify-content-between py-1">
+            <span class="text-muted">Toll-Free Helpline</span><strong class="text-primary">1800-180-4400</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public News Box -->
+      <div class="nn-sidebar-box">
+        <div class="nn-card-header">
+          <span>Public News</span>
+          <a href="{{ url_for('notices', category='Public News') }}" class="text-white small text-decoration-none">View All</a>
+        </div>
+        <div class="nn-ticker-list">
+          {% for item in public_news %}
+          <div class="nn-ticker-item">
+            <a href="{{ url_for('notices', category='Public News') }}" class="text-decoration-none text-dark fw-semibold">
+              <i class="fa-solid fa-angle-double-right text-primary me-1"></i>{{ item.title }}
+            </a>
+            {% if item.is_new %}<span class="nn-badge-new">New</span>{% endif %}
+            <div class="text-muted" style="font-size:0.74rem;">{{ item.published_date }} &bull; {{ item.department }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Important Notices Box -->
+      <div class="nn-sidebar-box">
+        <div class="nn-card-header">
+          <span>Important Notices</span>
+          <a href="{{ url_for('notices', category='Important Notice') }}" class="text-white small text-decoration-none">View All</a>
+        </div>
+        <div class="nn-ticker-list">
+          {% for item in important_notices %}
+          <div class="nn-ticker-item">
+            <a href="{{ url_for('notices', category='Important Notice') }}" class="text-decoration-none text-dark fw-semibold">
+              <i class="fa-solid fa-bullhorn text-danger me-1"></i>{{ item.title }}
+            </a>
+            {% if item.is_new %}<span class="nn-badge-new">New</span>{% endif %}
+            <div class="text-muted" style="font-size:0.74rem;">{{ item.published_date }} &bull; {{ item.department }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

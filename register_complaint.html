@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}Register Complaint (Choose Problem) — Nagar Nigam Samadhan{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+      <h2 class="nn-section-heading mb-1">Jaipur Samadhan — Choose Your Problem</h2>
+      <p class="text-muted small mb-0">
+        No manual complaint writing needed! Simply click your problem category, choose the exact issue, select your ward, and submit.
+      </p>
+    </div>
+    <a href="{{ url_for('track_complaint') }}" class="btn btn-outline-primary btn-sm fw-semibold">
+      <i class="fa-solid fa-magnifying-glass me-1"></i>Already Registered? Track Status
+    </a>
+  </div>
+
+  <form method="POST" action="{{ url_for('register_complaint') }}" id="complaintForm" class="nn-panel">
+    <!-- STEP 1: Problem Category Cards -->
+    <div class="mb-4">
+      <h5 class="fw-bold text-primary mb-3">
+        <span class="badge bg-primary me-2">Step 1</span>Select Problem Department / Category
+      </h5>
+      <div class="row g-2" id="categoryGrid">
+        {% for cat in categories %}
+        <div class="col-sm-6 col-md-3">
+          <label class="problem-cat-card {% if preselected_cat == cat.id %}selected{% endif %}" data-cat-id="{{ cat.id }}">
+            <input type="radio" name="category_id" value="{{ cat.id }}" class="d-none"
+                   {% if preselected_cat == cat.id %}checked{% endif %} required>
+            <div class="d-flex align-items-center gap-2">
+              <span class="problem-cat-icon"><i class="{{ cat.icon }}"></i></span>
+              <div>
+                <div class="fw-bold small">{{ cat.name }}</div>
+                <div class="text-muted" style="font-size:0.72rem;">{{ cat.name_hi }}</div>
+              </div>
+            </div>
+            <div class="text-muted" style="font-size:0.75rem;">{{ cat.summary }}</div>
+            <div class="mt-auto pt-1 d-flex justify-content-between align-items-center">
+              <span class="badge bg-light text-primary border">{{ cat.sub_problems|length }} Options</span>
+              <span class="text-muted" style="font-size:0.72rem;">SLA: {{ cat.sla_hours }}h</span>
+            </div>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- STEP 2: Specific Predefined Sub-Problems (Zero Typing!) -->
+    <div class="mb-4" id="subProblemSection">
+      <h5 class="fw-bold text-primary mb-2">
+        <span class="badge bg-primary me-2">Step 2</span>Click the Exact Problem You Are Facing
+      </h5>
+      <p class="small text-muted mb-2" id="subProblemHint">
+        Select any category above to view all predefined municipal issues.
+      </p>
+      <div class="d-flex flex-column gap-2" id="subProblemList"></div>
+    </div>
+
+    <!-- STEP 3: Predefined Severity, Duration & Location Type Chips -->
+    <div class="mb-4">
+      <h5 class="fw-bold text-primary mb-3">
+        <span class="badge bg-primary me-2">Step 3</span>Choose Severity, Duration &amp; Location Type
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Severity / Urgency</label>
+          <div class="d-flex flex-wrap gap-2" data-pill-group="severity">
+            {% for sev in severities %}
+            <label class="pill-option {% if (form_data.get('severity', 'Medium') == sev.id) %}selected{% endif %}">
+              <input type="radio" name="severity" value="{{ sev.id }}" class="d-none"
+                     {% if (form_data.get('severity', 'Medium') == sev.id) %}checked{% endif %}>
+              <span style="width:10px;height:10px;border-radius:50%;background:{{ sev.color }};display:inline-block;"></span>
+              {{ sev.label }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">How Long Has This Issue Existed?</label>
+          <div class="d-flex flex-wrap gap-2" data-pill-group="duration">
+            {% for dur in durations %}
+            <label class="pill-option {% if (form_data.get('duration', durations[0]) == dur) %}selected{% endif %}">
+              <input type="radio" name="duration" value="{{ dur }}" class="d-none"
+                     {% if (form_data.get('duration', durations[0]) == dur) %}checked{% endif %}>
+              {{ dur }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Spot / Location Type</label>
+          <div class="d-flex flex-wrap gap-2" data-pill-group="location_type">
+            {% for loc in location_types %}
+            <label class="pill-option {% if (form_data.get('location_type', location_types[0]) == loc) %}selected{% endif %}">
+              <input type="radio" name="location_type" value="{{ loc }}" class="d-none"
+                     {% if (form_data.get('location_type', location_types[0]) == loc) %}checked{% endif %}>
+              {{ loc }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: Zone, Ward & Citizen Details -->
+    <div class="mb-4">
+      <h5 class="fw-bold text-primary mb-3">
+        <span class="badge bg-primary me-2">Step 4</span>Select Zone, Ward &amp; Contact Information
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Municipal Zone <span class="text-danger">*</span></label>
+          <select name="zone_id" id="zoneSelect" class="form-select" required>
+            <option value="">-- Choose Zone --</option>
+            {% for z in zones %}
+            <option value="{{ z.id }}" {% if form_data.get('zone_id') == z.id %}selected{% endif %}>
+              {{ z.name }} ({{ z.name_hi }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Ward Number <span class="text-danger">*</span></label>
+          <select name="ward" id="wardSelect" class="form-select" required>
+            <option value="">-- Select Zone First --</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Nearest Landmark <span class="text-muted">(Optional)</span></label>
+          <input type="text" name="landmark" class="form-control"
+                 value="{{ form_data.get('landmark', '') }}"
+                 placeholder="e.g., Near Central Park Gate 2 (Optional)">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Citizen Full Name <span class="text-danger">*</span></label>
+          <input type="text" name="citizen_name" class="form-control" required
+                 value="{{ form_data.get('citizen_name', '') }}" placeholder="Enter your full name">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">10-Digit Mobile Number <span class="text-danger">*</span></label>
+          <input type="tel" name="citizen_phone" class="form-control" pattern="[0-9]{10}" maxlength="10" required
+                 value="{{ form_data.get('citizen_phone', '') }}" placeholder="98XXXXXXXX">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small">Email Address <span class="text-muted">(Optional)</span></label>
+          <input type="email" name="citizen_email" class="form-control"
+                 value="{{ form_data.get('citizen_email', '') }}" placeholder="name@example.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Selection Summary & Submit -->
+    <div class="p-3 rounded mb-3" style="background:#f0f9ff; border:1px solid #bae6fd;">
+      <div class="small fw-bold text-primary mb-1"><i class="fa-solid fa-clipboard-check me-1"></i>Selected Problem Summary:</div>
+      <div id="selectionSummary" class="small text-dark">No problem selected yet — choose a Category and Sub-Problem above.</div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary btn-lg px-4 fw-bold">
+        <i class="fa-solid fa-paper-plane me-2"></i>Submit Grievance &amp; Get Tracking ID
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const CATEGORIES_DATA = {{ categories | tojson }};
+const ZONES_DATA = {{ zones | tojson }};
+const INITIAL_SUB = {{ form_data.get('sub_problem_id', '') | tojson }};
+const INITIAL_WARD = {{ form_data.get('ward', '') | tojson }};
+
+(function () {
+  const catCards = document.querySelectorAll(".problem-cat-card");
+  const subList = document.getElementById("subProblemList");
+  const subHint = document.getElementById("subProblemHint");
+  const summaryEl = document.getElementById("selectionSummary");
+  const zoneSelect = document.getElementById("zoneSelect");
+  const wardSelect = document.getElementById("wardSelect");
+
+  let selectedCat = null;
+  let selectedSub = null;
+
+  function updateSummary() {
+    if (!selectedCat || !selectedSub) {
+      summaryEl.textContent = "Choose a Problem Category and click the exact issue above.";
+      return;
+    }
+    summaryEl.innerHTML = `<strong>${selectedCat.name}</strong> &rarr; <span class="text-primary fw-semibold">${selectedSub.title}</span> <span class="badge bg-info text-dark ms-1">Dept: ${selectedCat.department} | SLA: ${selectedSub.sla_hours}h</span>`;
+  }
+
+  function renderSubProblems(catId, preselectSubId) {
+    const cat = CATEGORIES_DATA.find(c => c.id === catId);
+    selectedCat = cat || null;
+    selectedSub = null;
+    subList.innerHTML = "";
+    if (!cat) {
+      subHint.textContent = "Select any category above to view all predefined municipal issues.";
+      updateSummary();
+      return;
+    }
+
+    subHint.innerHTML = `Showing <strong>${cat.sub_problems.length}</strong> predefined issues under <strong>${cat.name}</strong> (${cat.department}):`;
+    cat.sub_problems.forEach((sub, idx) => {
+      const label = document.createElement("label");
+      label.className = "subproblem-item";
+      const isChecked = preselectSubId ? sub.id === preselectSubId : idx === 0;
+      if (isChecked) {
+        label.classList.add("selected");
+        selectedSub = sub;
+      }
+      label.innerHTML = `
+        <div class="d-flex align-items-center gap-2">
+          <input type="radio" name="sub_problem_id" value="${sub.id}" class="form-check-input mt-0" ${isChecked ? "checked" : ""} required>
+          <span>${sub.title}</span>
+        </div>
+        <span class="badge bg-light text-dark border flex-shrink-0">SLA: ${sub.sla_hours} hrs</span>
+      `;
+      label.addEventListener("click", () => {
+        document.querySelectorAll(".subproblem-item").forEach(el => el.classList.remove("selected"));
+        label.classList.add("selected");
+        selectedSub = sub;
+        updateSummary();
+      });
+      subList.appendChild(label);
+    });
+    updateSummary();
+  }
+
+  catCards.forEach(card => {
+    card.addEventListener("click", () => {
+      catCards.forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      const radio = card.querySelector("input[type='radio']");
+      if (radio) radio.checked = true;
+      renderSubProblems(card.dataset.catId, null);
+    });
+  });
+
+  // Pill groups
+  document.querySelectorAll("[data-pill-group]").forEach(group => {
+    const pills = group.querySelectorAll(".pill-option");
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        pills.forEach(p => p.classList.remove("selected"));
+        pill.classList.add("selected");
+        const radio = pill.querySelector("input[type='radio']");
+        if (radio) radio.checked = true;
+      });
+    });
+  });
+
+  // Dynamic Ward dropdown
+  function populateWards(zoneId, selectedWard) {
+    wardSelect.innerHTML = "";
+    const zone = ZONES_DATA.find(z => z.id === zoneId);
+    if (!zone) {
+      wardSelect.innerHTML = '<option value="">-- Select Zone First --</option>';
+      return;
+    }
+    const defOpt = document.createElement("option");
+    defOpt.value = "";
+    defOpt.textContent = `-- Choose Ward (${zone.wards.length} Wards) --`;
+    wardSelect.appendChild(defOpt);
+    zone.wards.forEach(w => {
+      const opt = document.createElement("option");
+      opt.value = w;
+      opt.textContent = w;
+      if (selectedWard && selectedWard === w) opt.selected = true;
+      wardSelect.appendChild(opt);
+    });
+  }
+
+  zoneSelect.addEventListener("change", () => populateWards(zoneSelect.value, null));
+
+  // Initial state if preselected or validation bounce-back
+  const checkedCat = document.querySelector("input[name='category_id']:checked");
+  if (checkedCat) {
+    renderSubProblems(checkedCat.value, INITIAL_SUB);
+  } else if (CATEGORIES_DATA.length > 0) {
+    // Auto-select first category so sub-problems are immediately visible
+    const firstCard = catCards[0];
+    if (firstCard) {
+      firstCard.classList.add("selected");
+      firstCard.querySelector("input[type='radio']").checked = true;
+      renderSubProblems(firstCard.dataset.catId, null);
+    }
+  }
+  if (zoneSelect.value) {
+    populateWards(zoneSelect.value, INITIAL_WARD);
+  }
+})();
+</script>
+{% endblock %}

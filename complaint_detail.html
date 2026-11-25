@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Complaint {{ complaint.tracking_id }} — Nagar Nigam Samadhan{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  {% if is_new %}
+  <div class="alert alert-success border-success shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <h5 class="fw-bold mb-1"><i class="fa-solid fa-circle-check me-2"></i>Grievance Registered Successfully!</h5>
+      <span>Save your Tracking ID <strong class="fs-5">{{ complaint.tracking_id }}</strong> to check resolution progress anytime.</span>
+    </div>
+    <button onclick="window.print()" class="btn btn-success btn-sm no-print"><i class="fa-solid fa-print me-1"></i>Print Receipt</button>
+  </div>
+  {% endif %}
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="nn-panel">
+        <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+          <div>
+            <span class="badge bg-primary mb-1">{{ complaint.department }}</span>
+            <h3 class="fw-bold text-primary mb-0">{{ complaint.tracking_id }}</h3>
+            <small class="text-muted">Registered on {{ complaint.created_at }} &bull; SLA Target: {{ complaint.sla_hours }} Hours</small>
+          </div>
+          <div class="text-end">
+            <div class="small text-muted">Current Status</div>
+            <span class="badge fs-6 {% if complaint.status in ('Resolved','Closed') %}bg-success{% elif complaint.status == 'In Progress' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}">
+              {{ complaint.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <div class="small text-muted">Problem Category</div>
+            <div class="fw-bold">{{ complaint.category_name }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="small text-muted">Severity &amp; Duration</div>
+            <div class="fw-semibold">{{ complaint.severity }} &bull; {{ complaint.duration }}</div>
+          </div>
+          <div class="col-12">
+            <div class="small text-muted">Chosen Problem</div>
+            <div class="p-2 rounded bg-light border fw-semibold text-dark">{{ complaint.sub_problem_title }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="small text-muted">Zone &amp; Ward</div>
+            <div class="fw-semibold">{{ complaint.zone_name }}<br>{{ complaint.ward }}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="small text-muted">Location Type &amp; Landmark</div>
+            <div class="fw-semibold">{{ complaint.location_type }}{% if complaint.landmark %} — {{ complaint.landmark }}{% endif %}</div>
+          </div>
+          <div class="col-md-6">
+            <div class="small text-muted">Citizen Name &amp; Contact</div>
+            <div class="fw-semibold">{{ complaint.citizen_name }} ({{ complaint.citizen_phone }})</div>
+          </div>
+          <div class="col-md-6">
+            <div class="small text-muted">Assigned Municipal Officer</div>
+            <div class="fw-semibold text-primary">{{ complaint.assigned_officer }}</div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded bg-light border">
+          <div class="small fw-bold text-dark mb-1">Latest Officer Remark:</div>
+          <div class="small mb-0">{{ complaint.officer_remarks }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="nn-panel">
+        <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i>Resolution Timeline</h5>
+        {% for step in history %}
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="fw-bold small">{{ step.status }}</div>
+          <div class="text-muted" style="font-size:0.75rem;">{{ step.created_at }} &bull; {{ step.updated_by }}</div>
+          <div class="small mt-1">{{ step.remarks }}</div>
+        </div>
+        {% endfor %}
+        <div class="d-grid gap-2 mt-3 no-print">
+          <button onclick="window.print()" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-print me-1"></i>Print Acknowledgment</button>
+          <a href="{{ url_for('register_complaint') }}" class="btn btn-primary btn-sm">Register Another Problem</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

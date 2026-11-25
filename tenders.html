@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Municipal Tenders & e-Auction — Nagar Nigam{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="nn-section-heading">Active Municipal Tenders &amp; e-Auctions</h2>
+  <div class="nn-panel">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Tender No.</th>
+            <th>Work / Procurement Description</th>
+            <th>Department</th>
+            <th>Estimated Cost</th>
+            <th>Closing Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in tenders %}
+          <tr>
+            <td class="fw-bold text-primary">{{ t.tender_no }}</td>
+            <td class="small fw-semibold">{{ t.title }}</td>
+            <td class="small">{{ t.department }}</td>
+            <td class="fw-bold">{{ t.estimated_cost }}</td>
+            <td class="small">{{ t.closing_date }}</td>
+            <td>
+              <span class="badge {% if t.status == 'Closing Soon' %}bg-warning text-dark{% else %}bg-success{% endif %}">{{ t.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

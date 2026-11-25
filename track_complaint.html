@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Track Complaint Status — Nagar Nigam Samadhan{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="nn-section-heading">Track Your Municipal Grievance</h2>
+
+  <div class="nn-panel mb-4">
+    <form method="GET" action="{{ url_for('track_complaint') }}" class="row g-2 align-items-end">
+      <div class="col-md-8">
+        <label class="form-label fw-semibold small">Enter Grievance Tracking ID or 10-Digit Mobile Number</label>
+        <input type="text" name="q" class="form-control form-control-lg" value="{{ query }}"
+               placeholder="e.g. NNJ-2026-000101 or 9829011223" required>
+      </div>
+      <div class="col-md-4 d-grid">
+        <button type="submit" class="btn btn-primary btn-lg fw-bold">
+          <i class="fa-solid fa-magnifying-glass me-2"></i>Check Live Status
+        </button>
+      </div>
+    </form>
+    <div class="small text-muted mt-2">
+      Sample IDs to test:
+      <a href="{{ url_for('complaint_detail', tracking_id='NNJ-2026-000101') }}" class="badge bg-light text-primary border text-decoration-none">NNJ-2026-000101</a>
+      <a href="{{ url_for('complaint_detail', tracking_id='NNJ-2026-000102') }}" class="badge bg-light text-primary border text-decoration-none">NNJ-2026-000102</a>
+      <a href="{{ url_for('complaint_detail', tracking_id='NNJ-2026-000103') }}" class="badge bg-light text-primary border text-decoration-none">NNJ-2026-000103</a>
+    </div>
+  </div>
+
+  <div class="nn-panel">
+    <h5 class="fw-bold mb-3">
+      {% if query %}Search Results for "{{ query }}"{% else %}Recent Municipal Grievances{% endif %}
+    </h5>
+    {% if results %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Tracking ID</th>
+            <th>Category &amp; Chosen Problem</th>
+            <th>Zone / Ward</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in results %}
+          <tr>
+            <td class="fw-bold text-primary">{{ c.tracking_id }}</td>
+            <td>
+              <div class="fw-semibold small">{{ c.category_name }}</div>
+              <div class="text-muted small">{{ c.sub_problem_title }}</div>
+            </td>
+            <td class="small">{{ c.zone_name }}<br><span class="text-muted">{{ c.ward }}</span></td>
+            <td><span class="badge bg-secondary">{{ c.severity }}</span></td>
+            <td>
+              {% if c.status in ('Resolved', 'Closed') %}
+                <span class="badge bg-success">{{ c.status }}</span>
+              {% elif c.status == 'In Progress' %}
+                <span class="badge bg-warning text-dark">{{ c.status }}</span>
+              {% else %}
+                <span class="badge bg-info text-dark">{{ c.status }}</span>
+              {% endif %}
+            </td>
+            <td class="small text-muted">{{ c.updated_at }}</td>
+            <td>
+              <a href="{{ url_for('complaint_detail', tracking_id=c.tracking_id) }}" class="btn btn-sm btn-outline-primary">View Timeline</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="alert alert-warning mb-0">No complaints matched your search. Please check the Tracking ID or Mobile Number.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

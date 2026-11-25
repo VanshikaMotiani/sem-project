@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}FAQs — Nagar Nigam Municipal Corporation{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="nn-section-heading">Frequently Asked Questions (FAQs)</h2>
+  <div class="nn-panel">
+    <div class="accordion" id="faqAcc">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#f1">
+            How do I register a complaint without typing a long description?
+          </button>
+        </h2>
+        <div id="f1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc">
+          <div class="accordion-body small">
+            Go to <a href="{{ url_for('register_complaint') }}">Register Complaint</a>, pick one of the 8 Municipal Departments, click the exact predefined issue card, select severity/duration/location type pills, choose your Zone &amp; Ward, and submit!
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">
+            What is the SLA (Service Level Agreement) time for each department?
+          </button>
+        </h2>
+        <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+          <div class="accordion-body small">
+            <ul class="mb-0">
+              {% for cat in categories %}
+              <li><strong>{{ cat.name }} ({{ cat.department }}):</strong> Standard SLA {{ cat.sla_hours }} hours (Emergency hazards like broken manhole covers or fallen trees are prioritized within 6 hours).</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3">
+            How do I track my registered complaint?
+          </button>
+        </h2>
+        <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+          <div class="accordion-body small">
+            Visit <a href="{{ url_for('track_complaint') }}">Track Status</a> and enter your Tracking ID (e.g. <code>NNJ-2026-000101</code>) or your 10-digit registered mobile number.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

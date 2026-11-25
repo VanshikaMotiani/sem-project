@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Public Notices & News — Nagar Nigam{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h2 class="nn-section-heading mb-0">Public Notices, Circulars &amp; News</h2>
+    <div class="btn-group">
+      <a href="{{ url_for('notices') }}" class="btn btn-sm {% if category_filter == 'All' %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+      <a href="{{ url_for('notices', category='Important Notice') }}" class="btn btn-sm {% if category_filter == 'Important Notice' %}btn-primary{% else %}btn-outline-primary{% endif %}">Important Notices</a>
+      <a href="{{ url_for('notices', category='Public News') }}" class="btn btn-sm {% if category_filter == 'Public News' %}btn-primary{% else %}btn-outline-primary{% endif %}">Public News</a>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    {% for n in notices %}
+    <div class="col-md-6">
+      <div class="nn-card p-3">
+        <div class="d-flex justify-content-between align-items-start mb-1">
+          <span class="badge {% if n.category == 'Important Notice' %}bg-danger{% else %}bg-info text-dark{% endif %}">{{ n.category }}</span>
+          <small class="text-muted">{{ n.published_date }}</small>
+        </div>
+        <h6 class="fw-bold text-dark mt-1">
+          {{ n.title }}
+          {% if n.is_new %}<span class="nn-badge-new">New</span>{% endif %}
+        </h6>
+        <p class="small text-muted mb-2">{{ n.details }}</p>
+        <div class="mt-auto small text-primary fw-semibold"><i class="fa-solid fa-building me-1"></i>{{ n.department }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

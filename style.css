@@ -1,0 +1,463 @@
+/* Nagar Nigam Civic Portal — Original Modern Municipal Stylesheet */
+:root {
+  --nn-navy: #0a1f44;
+  --nn-blue: #0d4f8b;
+  --nn-cyan: #0ea5e9;
+  --nn-teal: #0f766e;
+  --nn-gold: #f59e0b;
+  --nn-bg: #f1f5f9;
+  --nn-surface: #ffffff;
+  --nn-border: #dce4ef;
+  --nn-text: #1e293b;
+  --nn-muted: #64748b;
+  --nn-gradient: linear-gradient(120deg, #0a1f44 0%, #0d4f8b 55%, #0284c7 100%);
+  --font-scale: 1;
+}
+
+html {
+  font-size: calc(15px * var(--font-scale));
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Segoe UI", "Noto Sans Devanagari", Roboto, Arial, sans-serif;
+  background-color: var(--nn-bg);
+  color: var(--nn-text);
+  margin: 0;
+  padding: 0;
+}
+
+/* High Contrast Theme */
+body.high-contrast {
+  background-color: #0b0d12 !important;
+  color: #f8fafc !important;
+}
+body.high-contrast .nn-card,
+body.high-contrast .nn-sidebar-box,
+body.high-contrast .nn-panel,
+body.high-contrast .nn-service-card,
+body.high-contrast .problem-cat-card,
+body.high-contrast .subproblem-item,
+body.high-contrast .table {
+  background-color: #161b26 !important;
+  color: #f8fafc !important;
+  border-color: #38bdf8 !important;
+}
+body.high-contrast .text-muted,
+body.high-contrast .nn-muted {
+  color: #cbd5e1 !important;
+}
+
+/* Top Accessibility Strip */
+.nn-topbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.8rem;
+  padding: 5px 0;
+}
+.nn-access-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.76rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.nn-access-btn:hover {
+  border-color: var(--nn-navy);
+}
+.nn-theme-cyan {
+  background: #0284c7;
+  color: #fff;
+  border-color: #0369a1;
+}
+.nn-theme-dark {
+  background: #0f172a;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Main Navigation Bar */
+.nn-navbar {
+  background: var(--nn-gradient);
+  box-shadow: 0 4px 14px rgba(10, 31, 68, 0.22);
+  padding: 0.55rem 0;
+}
+.nn-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #fff !important;
+  text-decoration: none;
+}
+.nn-brand-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.15;
+}
+.nn-brand-sub {
+  font-size: 0.74rem;
+  opacity: 0.88;
+  display: block;
+}
+.nn-navbar .nav-link {
+  color: #f1f5f9 !important;
+  font-weight: 500;
+  font-size: 0.89rem;
+  padding: 0.45rem 0.72rem !important;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+.nn-navbar .nav-link:hover,
+.nn-navbar .nav-link.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff !important;
+}
+
+/* Original Civic Command Hero */
+.nn-hero-banner {
+  background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.28), transparent 45%),
+              linear-gradient(125deg, #071734 0%, #0d3b66 55%, #0f628c 100%);
+  color: #ffffff;
+  padding: 2.5rem 0;
+  border-bottom: 4px solid var(--nn-gold);
+}
+.nn-hero-quickbox {
+  background: rgba(255, 255, 255, 0.97);
+  color: var(--nn-text);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Modern Service Cards Grid (4x3) */
+.nn-service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 1.4rem;
+  margin-bottom: 1.8rem;
+}
+@media (max-width: 991px) {
+  .nn-service-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 575px) {
+  .nn-service-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.nn-service-card {
+  background: #ffffff;
+  border: 1px solid var(--nn-border);
+  border-radius: 10px;
+  padding: 14px;
+  text-decoration: none;
+  color: var(--nn-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.nn-service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(10, 31, 68, 0.12);
+  border-color: var(--nn-cyan);
+  color: var(--nn-navy);
+}
+.nn-service-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Section Heading */
+.nn-section-heading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--nn-navy);
+  padding-bottom: 8px;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  position: relative;
+}
+.nn-section-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 78px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--nn-navy), var(--nn-cyan));
+}
+
+/* Cards & Sidebar Boxes */
+.nn-card {
+  background: var(--nn-surface);
+  border: 1px solid var(--nn-border);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.nn-card-header {
+  background: var(--nn-gradient);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.94rem;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nn-card-body {
+  padding: 13px 15px;
+  flex: 1;
+}
+.nn-check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nn-check-list li {
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+  font-size: 0.86rem;
+}
+.nn-check-list li:last-child {
+  border-bottom: none;
+}
+.nn-check-list a {
+  text-decoration: none;
+  color: #1e3a5f;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.nn-check-list a:hover {
+  color: var(--nn-blue);
+  text-decoration: underline;
+}
+.nn-check-list i {
+  color: var(--nn-cyan);
+  margin-top: 3px;
+  font-size: 0.8rem;
+}
+
+.nn-sidebar-box {
+  background: #ffffff;
+  border: 1px solid var(--nn-border);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.nn-ticker-list {
+  max-height: 230px;
+  overflow-y: auto;
+  padding: 10px 14px;
+}
+.nn-ticker-item {
+  padding: 8px 0;
+  border-bottom: 1px dashed #e2e8f0;
+  font-size: 0.84rem;
+}
+.nn-ticker-item:last-child {
+  border-bottom: none;
+}
+.nn-badge-new {
+  display: inline-block;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-left: 4px;
+  animation: nnBlink 1.3s infinite;
+}
+@keyframes nnBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* Problem Registration Wizard */
+.nn-panel {
+  background: #fff;
+  border: 1px solid var(--nn-border);
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(10, 31, 68, 0.07);
+  padding: 1.5rem;
+}
+.problem-cat-card {
+  border: 2px solid #dbe3ee;
+  border-radius: 10px;
+  padding: 14px 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.problem-cat-card:hover {
+  border-color: var(--nn-cyan);
+  background: #f0f9ff;
+  transform: translateY(-2px);
+}
+.problem-cat-card.selected {
+  border-color: var(--nn-navy);
+  background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
+  box-shadow: 0 4px 12px rgba(10, 31, 68, 0.14);
+}
+.problem-cat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--nn-gradient);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.subproblem-item {
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.15s ease;
+}
+.subproblem-item:hover {
+  border-color: var(--nn-blue);
+  background: #f8fbff;
+}
+.subproblem-item.selected {
+  border-color: var(--nn-navy);
+  background: #e0f2fe;
+  font-weight: 600;
+}
+
+.pill-option {
+  border: 1.5px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.pill-option:hover {
+  border-color: var(--nn-blue);
+}
+.pill-option.selected {
+  background: var(--nn-navy);
+  color: #fff;
+  border-color: var(--nn-navy);
+}
+
+/* Status Timeline */
+.timeline-step {
+  position: relative;
+  padding-left: 26px;
+  padding-bottom: 16px;
+  border-left: 2px solid #cbd5e1;
+}
+.timeline-step:last-child {
+  border-left-color: transparent;
+}
+.timeline-dot {
+  position: absolute;
+  left: -8px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--nn-cyan);
+  border: 2px solid var(--nn-navy);
+}
+
+/* Footer */
+.nn-footer {
+  background: linear-gradient(180deg, #0b1730 0%, #0f2042 100%);
+  color: #e2e8f0;
+  padding-top: 2.2rem;
+  margin-top: 2.8rem;
+  border-top: 4px solid var(--nn-gold);
+}
+.nn-footer h6 {
+  color: #38bdf8;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 6px;
+}
+.nn-footer a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.86rem;
+}
+.nn-footer a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+.nn-footer-bottom {
+  background: #060d1c;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 12px 0;
+  margin-top: 1.8rem;
+}
+
+#scrollTopBtn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--nn-navy);
+  color: #fff;
+  border: 1px solid var(--nn-cyan);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1050;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+}
+
+@media print {
+  .no-print, .nn-topbar, .nn-navbar, .nn-footer, #scrollTopBtn {
+    display: none !important;
+  }
+}

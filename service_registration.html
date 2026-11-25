@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Citizen Service Registration — Nagar Nigam{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="nn-section-heading">Online Citizen Registrations &amp; Licenses</h2>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <form method="POST" class="nn-panel">
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">Select Municipal Service</label>
+          <select name="service_type" class="form-select">
+            {% for st in service_types %}
+            <option value="{{ st }}" {% if selected_type == st %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">Request Option</label>
+          <select name="category_option" class="form-select">
+            <option>New Registration</option>
+            <option>Annual Renewal</option>
+            <option>Name / Address Correction</option>
+            <option>Duplicate Certificate Copy</option>
+          </select>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Applicant Full Name <span class="text-danger">*</span></label>
+            <input type="text" name="applicant_name" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">10-Digit Mobile Number <span class="text-danger">*</span></label>
+            <input type="tel" name="phone" class="form-control" pattern="[0-9]{10}" maxlength="10" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Zone <span class="text-danger">*</span></label>
+            <select name="zone_id" id="srvZone" class="form-select" required>
+              <option value="">-- Choose Zone --</option>
+              {% for z in zones %}<option value="{{ z.id }}">{{ z.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Ward <span class="text-danger">*</span></label>
+            <select name="ward" id="srvWard" class="form-select" required>
+              <option value="">-- Select Zone First --</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold small">Child / Pet / Shop / Booth Name (Optional)</label>
+            <input type="text" name="subject_name" class="form-control" placeholder="Optional reference name">
+          </div>
+        </div>
+
+        <div class="mt-4 d-grid">
+          <button type="submit" class="btn btn-primary fw-bold">Submit Service Application</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="nn-panel">
+        <h5 class="fw-bold text-primary mb-3">Recent Service Applications</h5>
+        {% if recent_apps %}
+          {% for app in recent_apps %}
+          <div class="p-2 mb-2 rounded border bg-light">
+            <div class="d-flex justify-content-between">
+              <strong class="text-primary small">{{ app.application_no }}</strong>
+              <span class="badge bg-info text-dark">{{ app.status }}</span>
+            </div>
+            <div class="small fw-semibold">{{ app.service_type }} — {{ app.details.application_category }}</div>
+            <div class="text-muted" style="font-size:0.75rem;">{{ app.applicant_name }} &bull; {{ app.zone_name }} &bull; {{ app.created_at }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted small mb-0">No service applications submitted yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ZONES = {{ zones | tojson }};
+const srvZone = document.getElementById("srvZone");
+const srvWard = document.getElementById("srvWard");
+srvZone.addEventListener("change", () => {
+  const z = ZONES.find(x => x.id === srvZone.value);
+  srvWard.innerHTML = z ? z.wards.map(w => `<option value="${w}">${w}</option>`).join("") : '<option value="">-- Select Zone First --</option>';
+});
+</script>
+{% endblock %}

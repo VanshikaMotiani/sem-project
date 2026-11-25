@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Contact Us & Helplines — Nagar Nigam{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="nn-section-heading">Contact Us &amp; Citizen Helpline Centers</h2>
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="nn-panel h-100">
+        <h5 class="fw-bold text-primary mb-3">Headquarters &amp; Helplines</h5>
+        <p class="small"><strong>Nagar Nigam Head Office:</strong><br>Pt. Deendayal Upadhyaya Bhawan, Lal Kothi, Tonk Road, Jaipur</p>
+        <p class="small"><strong>JMC Call Center:</strong> <span class="text-primary fw-bold">0141-2747400</span><br>(Timing: 08:00 AM to 10:00 PM)</p>
+        <p class="small"><strong>Safaimitra Helpline (24&times;7):</strong> <span class="text-danger fw-bold">14420</span></p>
+        <p class="small"><strong>Nodal Officer:</strong> Sh. Ajeet Singh, Dy. Director (IT) — 0141-2740140</p>
+        <a href="{{ url_for('register_complaint') }}" class="btn btn-primary btn-sm fw-bold mt-2">Register Online Grievance</a>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="nn-panel h-100">
+        <h5 class="fw-bold text-primary mb-3">Zonal Control Rooms</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered align-middle">
+            <thead class="table-primary">
+              <tr><th>Zone</th><th>Zonal Commissioner</th><th>Helpline</th></tr>
+            </thead>
+            <tbody>
+              {% for z in zones %}
+              <tr>
+                <td class="small fw-semibold">{{ z.name }}</td>
+                <td class="small">{{ z.officer }}</td>
+                <td class="small text-primary fw-bold">{{ z.phone }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

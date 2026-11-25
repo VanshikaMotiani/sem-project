@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Officer Login — Nagar Nigam Portal{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="nn-panel mx-auto" style="max-width: 440px;">
+    <div class="text-center mb-3">
+      <div class="problem-cat-icon mx-auto mb-2" style="width:54px;height:54px;font-size:1.4rem;">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h4 class="fw-bold text-primary mb-1">Municipal Officer Login</h4>
+      <p class="small text-muted mb-0">Departmental Grievance Resolution &amp; Notice Portal</p>
+    </div>
+
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label fw-semibold small">Officer Username</label>
+        <input type="text" name="username" class="form-control" placeholder="admin" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold small">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-primary fw-bold">Sign In to Dashboard</button>
+      </div>
+    </form>
+
+    <div class="p-2 rounded bg-light border small text-muted">
+      <strong>Demo Credentials (Semester Project):</strong><br>
+      Nodal Admin: <code>admin</code> / <code>nagar123</code><br>
+      Ward Officer: <code>wardofficer</code> / <code>ward123</code>
+    </div>
+  </div>
+</div>
+{% endblock %}
